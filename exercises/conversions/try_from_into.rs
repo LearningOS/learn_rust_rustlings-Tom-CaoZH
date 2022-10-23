@@ -21,7 +21,7 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
+//
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -32,10 +32,27 @@ enum IntoColorError {
 // but the slice implementation needs to check the slice length!
 // Also note that correct RGB color values must be integers in the 0..=255 range.
 
+fn invalid_color(c: i16) -> bool {
+    if c >=0 && c <= 255 {
+        return false;
+    }
+    return true;
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+        if invalid_color(r) || invalid_color(g) || invalid_color(b) {
+            return Err(IntoColorError::IntConversion);
+        }
+        let r = r as u8;
+        let g = g as u8;
+        let b = b as u8;
+        Ok(
+            Color { red: r, green: g, blue: b }
+        )
     }
 }
 
@@ -43,6 +60,15 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        if invalid_color(arr[0]) || invalid_color(arr[1]) || invalid_color(arr[2]) {
+            return Err(IntoColorError::IntConversion);
+        }
+        let r = arr[0] as u8;
+        let g = arr[1] as u8;
+        let b = arr[2] as u8;
+        Ok(
+            Color { red: r, green: g, blue: b }
+        )
     }
 }
 
@@ -50,6 +76,18 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        if invalid_color(slice[0]) || invalid_color(slice[1]) || invalid_color(slice[2]) {
+            return Err(IntoColorError::IntConversion);
+        }
+        let r = slice[0] as u8;
+        let g = slice[1] as u8;
+        let b = slice[2] as u8;
+        Ok(
+            Color { red: r, green: g, blue: b }
+        )
     }
 }
 
